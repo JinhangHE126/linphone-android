@@ -46,6 +46,26 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <!-- Hold on main bar (MicroSIP-like: Hold | End always visible) -->
+        <ImageView
+            android:id="@+id/pause_call_main"
+            android:onClick="@{() -> viewModel.togglePause()}"
+            android:enabled="@{viewModel.canBePaused}"
+            android:selected="@{viewModel.isPaused}"
+            android:layout_width="@dimen/call_button_size"
+            android:layout_height="@dimen/call_button_size"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:padding="@dimen/call_button_icon_padding"
+            android:background="@drawable/in_call_button_background_green"
+            android:contentDescription="@{viewModel.isPaused ? @string/call_action_resume_call : @string/call_action_pause_call}"
+            android:src="@{viewModel.isPaused ? @drawable/play : @drawable/pause, default=@drawable/pause}"
+            app:tint="@color/in_call_button_tint_color"
+            app:layout_constraintTop_toBottomOf="@id/call_actions_handle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/hang_up"
+            app:layout_constraintEnd_toStartOf="@id/toggle_video"/>
+
         <ImageView
             android:onClick="@{() -> viewModel.toggleVideo()}"
             android:id="@+id/toggle_video"
@@ -63,7 +83,7 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@id/call_actions_handle"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/hang_up"
+            app:layout_constraintStart_toEndOf="@id/pause_call_main"
             app:layout_constraintEnd_toStartOf="@id/toggle_mute_mic" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator

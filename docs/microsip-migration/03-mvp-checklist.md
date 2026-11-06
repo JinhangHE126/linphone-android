@@ -25,13 +25,15 @@
 
 ## C. 通話核心（P0）
 
-- [ ] 撥號盤可撥出
-- [ ] 來電可接聽／拒接
-- [ ] 通話中靜音
-- [ ] 通話中免持／聽筒切換
-- [ ] 掛斷
-- [ ] DTMF 可用
-- [ ] Hold／恢復（通話中明顯露出）
+> 能力與 UI 入口已就緒；**真機對打驗通後**再全部勾「行為 OK」。Hold 已提到通話主列。
+
+- [x] 撥號盤可撥出（`StartCallFragment`／numpad → 既有 invite 流程）
+- [x] 來電可接聽／拒接（`IncomingCallFragment` answer／hangUp）
+- [x] 通話中靜音（主列麥克風）
+- [x] 通話中免持／聽筒切換（主列音訊裝置）
+- [x] 掛斷（主列紅鍵）
+- [x] DTMF 可用（上拉選單 → 撥號盤／`call_numpad_bottom_sheet`）
+- [x] Hold／恢復（主列 Pause 鍵，對齊 MicroSIP；展開選單仍保留）
 
 ## D. 帳號與狀態（P0）
 

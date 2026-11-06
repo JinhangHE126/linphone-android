@@ -29,13 +29,13 @@ Phase 2 已完成。下一步：**實作導覽 + 藏 Chat／會議**（見 `03-m
 |----|---------------|--------|-------------------|------------|------|------|
 | F01 | SIP 帳號註冊 | P0 | 是 | `ui/assistant/`（如 `ThirdPartySipAccountLoginFragment`）、`AccountSettingsFragment`、`AccountSettingsViewModel` | 進行中 | 首層已對齊 MicroSIP（帳號名稱／SIP主機／使用者／網域／密碼／UDP）；新增預設 UDP／註冊 300／無 ICE |
 | F02 | 註冊狀態顯示（Online/Offline） | P0 | 是 | `AccountModel`（`registrationState*`）、`MainViewModel.onAccountRegistrationStateChanged`、Drawer／帳號 UI | 進行中 | 側欄已顯示註冊狀態；狀態列可再對齊 MicroSIP |
-| F03 | 撥號盤撥出 | P0 | 是 | `StartCallFragment`、`StartCallViewModel`、`start_call_fragment.xml`、`start_call_numpad_bottom_sheet.xml` | 未開始 | 現多從 History 再進撥號，非首屏 |
-| F04 | DTMF | P0 | 是 | `CurrentCallViewModel`（`sendDtmf`）、通話中小鍵盤 UI | 未開始 | |
-| F05 | 來電接聽／拒接 | P0 | 是 | `IncomingCallFragment`、`CurrentCallViewModel`／`hangUp` | 未開始 | Android 另有通知／全螢幕來電 |
-| F06 | 通話中靜音 | P0 | 是 | `CurrentCallViewModel.toggleMuteMicrophone()`、`ActiveCallFragment`、`CallActivity` | 未開始 | |
-| F07 | 通話中免持／聽筒 | P0 | 是 | `AudioDevicesMenuDialogFragment`、`AudioDeviceModel`、`CurrentCallViewModel` 音訊路由 | 未開始 | |
-| F08 | 通話中掛斷 | P0 | 是 | `CurrentCallViewModel.hangUp()`、`ActiveCallFragment` | 未開始 | |
-| F09 | Hold／恢復 | P0 | 是 | `CurrentCallViewModel.togglePause()`、`CallModel.togglePauseResume()`、`CallsListFragment`、`CallMenuDialogFragment` | 未開始 | UI 入口分散，可收斂成通話中明顯按鈕 |
+| F03 | 撥號盤撥出 | P0 | 是 | `StartCallFragment`、`StartCallViewModel`、`start_call_fragment.xml`、`start_call_numpad_bottom_sheet.xml` | 完成（待真機驗） | 撥號已為首屏 |
+| F04 | DTMF | P0 | 是 | `CurrentCallViewModel`（`sendDtmf`）、`call_numpad_bottom_sheet` | 完成（待真機驗） | 通話中上拉 → 撥號盤 |
+| F05 | 來電接聽／拒接 | P0 | 是 | `IncomingCallFragment`、`CurrentCallViewModel`／`hangUp` | 完成（待真機驗） | Android 另有通知／全螢幕來電 |
+| F06 | 通話中靜音 | P0 | 是 | `CurrentCallViewModel.toggleMuteMicrophone()`、`call_actions_generic` | 完成（待真機驗） | 主列 |
+| F07 | 通話中免持／聽筒 | P0 | 是 | `AudioDevicesMenuDialogFragment`、`CurrentCallViewModel.changeAudioOutputDevice` | 完成（待真機驗） | 主列 |
+| F08 | 通話中掛斷 | P0 | 是 | `CurrentCallViewModel.hangUp()`、`call_actions_generic` | 完成（待真機驗） | 主列紅鍵 |
+| F09 | Hold／恢復 | P0 | 是 | `CurrentCallViewModel.togglePause()`、`call_actions_generic`（`pause_call_main`） | 完成（待真機驗） | 已提到通話主列 |
 | F10 | 通話轉接 | P1 | 是 | `TransferCallFragment`、`blindTransferCallTo`／`attendedTransferCallTo`（`CurrentCallViewModel`） | 未開始 | 盲轉／諮詢轉都有 |
 | F11 | 視訊開關 | P1 | 是 | `CurrentCallViewModel.toggleVideo()`、`CallActivity`、`ActiveCallFragment` | 未開始 | |
 | F12 | 通訊錄瀏覽與點撥 | P0 | 是 | `ContactsListFragment`、`ContactFragment`、`coreContext.contactsManager` | 未開始 | |
