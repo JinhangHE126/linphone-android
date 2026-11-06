@@ -27,7 +27,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.core.Address
 import org.linphone.core.Conference
@@ -183,12 +182,8 @@ class StartCallViewModel
 
     @UiThread
     fun updateGroupCallButtonVisibility() {
-        coreContext.postOnCoreThread { core ->
-            val hideGroupCall = corePreferences.disableMeetings ||
-                !LinphoneUtils.isRemoteConferencingAvailable(core) ||
-                core.callsNb > 0
-            hideGroupCallButton.postValue(hideGroupCall)
-        }
+        // MicroSIP-like MVP: hide group/conference call entry from dialer
+        hideGroupCallButton.value = true
     }
 
     @UiThread

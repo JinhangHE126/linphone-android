@@ -23,6 +23,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.annotation.UiThread
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProvider
@@ -92,6 +94,34 @@ class AccountSettingsFragment : GenericMainFragment() {
 
         binding.setOutboundProxyTooltipClickListener {
             showOutboundProxyInfoDialog()
+        }
+
+        val transportSpinner = binding.basicAccountSettings.transport
+        val transportAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.drop_down_item,
+            viewModel.availableTransports
+        )
+        transportAdapter.setDropDownViewResource(R.layout.generic_dropdown_cell)
+        transportSpinner.adapter = transportAdapter
+        transportSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.setTransport(viewModel.availableTransports[position])
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
+        viewModel.defaultTransportIndexEvent.observe(viewLifecycleOwner) {
+            it.consume { index ->
+                transportSpinner.setSelection(index)
+            }
         }
 
         viewModel.accountFoundEvent.observe(viewLifecycleOwner) {

@@ -29,15 +29,15 @@ import androidx.annotation.UiThread
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.core.tools.Log
 import org.linphone.databinding.StartCallFragmentBinding
+import androidx.navigation.fragment.findNavController
 import org.linphone.ui.GenericActivity
 import org.linphone.ui.main.fragment.GenericAddressPickerFragment
 import org.linphone.ui.main.history.viewmodel.StartCallViewModel
 import org.linphone.ui.main.model.GroupSetOrEditSubjectDialogModel
+import org.linphone.ui.main.viewmodel.AbstractMainViewModel
 import org.linphone.utils.DialogUtils
 import org.linphone.utils.addCharacterAtPosition
 import org.linphone.utils.hideKeyboard
@@ -54,6 +54,8 @@ class StartCallFragment : GenericAddressPickerFragment() {
     private lateinit var binding: StartCallFragmentBinding
 
     override lateinit var viewModel: StartCallViewModel
+
+    private lateinit var navViewModel: AbstractMainViewModel
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -95,20 +97,20 @@ class StartCallFragment : GenericAddressPickerFragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(this)[StartCallViewModel::class.java]
+        navViewModel = ViewModelProvider(this)[AbstractMainViewModel::class.java]
 
         postponeEnterTransition()
         super.onViewCreated(view, savedInstanceState)
 
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.title.value = getString(R.string.history_call_start_title)
+        viewModel.title.value = getString(R.string.bottom_navigation_phone_label)
         binding.viewModel = viewModel
+        binding.navViewModel = navViewModel
         observeToastEvents(viewModel)
 
         binding.setBackClickListener {
-            // If back button from UI was clicked, go back even if numpad is opened
-            backPressedCallback.isEnabled = false
-            goBack()
+            // Dialer is the main tab root; ignore back affordance
         }
 
         binding.setHideNumpadClickListener {
@@ -121,6 +123,7 @@ class StartCallFragment : GenericAddressPickerFragment() {
         }
 
         setupRecyclerView(binding.contactsAndSuggestionsList)
+        setupBottomNavigation()
 
         viewModel.modelsList.observe(
             viewLifecycleOwner
@@ -137,11 +140,8 @@ class StartCallFragment : GenericAddressPickerFragment() {
 
         viewModel.leaveFragmentEvent.observe(viewLifecycleOwner) {
             it.consume {
-                // Post on main thread to allow for main activity to be resumed
-                coreContext.postOnMainThread {
-                    Log.i("$TAG Going back")
-                    goBack()
-                }
+                // Stay on dialer tab; CallActivity will take over the call UI
+                Log.i("$TAG Call started from dialer tab, staying on Phone tab")
             }
         }
 
@@ -208,15 +208,71 @@ class StartCallFragment : GenericAddressPickerFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (corePreferences.automaticallyShowDialpad) {
-            viewModel.isNumpadVisible.value = true
-        }
+        sharedViewModel.currentlyDisplayedFragment.value = R.id.startCallFragment
+        // Phone tab always shows the numpad by default (MicroSIP-like)
+        viewModel.isNumpadVisible.value = true
     }
 
     override fun onPause() {
         super.onPause()
 
         viewModel.isNumpadVisible.value = false
+    }
+
+    private fun setupBottomNavigation() {
+        navViewModel.dialerSelected.value = true
+
+        navViewModel.navigateToDialerEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                // Already on Phone tab
+            }
+        }
+
+        navViewModel.navigateToHistoryEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                if (findNavController().currentDestination?.id == R.id.startCallFragment) {
+                    findNavController().navigate(
+                        StartCallFragmentDirections.actionStartCallFragmentToHistoryListFragment()
+                    )
+                }
+            }
+        }
+
+        navViewModel.navigateToContactsEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                if (findNavController().currentDestination?.id == R.id.startCallFragment) {
+                    findNavController().navigate(
+                        StartCallFragmentDirections.actionStartCallFragmentToContactsListFragment()
+                    )
+                }
+            }
+        }
+
+        sharedViewModel.navigateToHistoryEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                if (findNavController().currentDestination?.id == R.id.startCallFragment) {
+                    findNavController().navigate(
+                        StartCallFragmentDirections.actionStartCallFragmentToHistoryListFragment()
+                    )
+                }
+            }
+        }
+
+        sharedViewModel.navigateToContactsEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                if (findNavController().currentDestination?.id == R.id.startCallFragment) {
+                    findNavController().navigate(
+                        StartCallFragmentDirections.actionStartCallFragmentToContactsListFragment()
+                    )
+                }
+            }
+        }
+
+        sharedViewModel.currentlyDisplayedFragment.observe(viewLifecycleOwner) {
+            navViewModel.dialerSelected.value = it == R.id.startCallFragment
+            navViewModel.callsSelected.value = it == R.id.historyListFragment
+            navViewModel.contactsSelected.value = it == R.id.contactsListFragment
+        }
     }
 
     private fun showGroupCallSubjectDialog() {

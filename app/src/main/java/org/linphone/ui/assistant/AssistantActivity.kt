@@ -56,8 +56,9 @@ class AssistantActivity : GenericActivity() {
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val navController = binding.assistantNavContainer.findNavController()
-            if (navController.currentDestination?.id != R.id.landingFragment) {
-                navController.popBackStack()
+            if (!navController.popBackStack()) {
+                // Allow leaving assistant so users can return to dialer without an account
+                finish()
             }
         }
     }
@@ -82,16 +83,8 @@ class AssistantActivity : GenericActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        coreContext.postOnCoreThread { core ->
-            if (core.accountList.isEmpty()) {
-                Log.i("$TAG No account configured, disabling back gesture")
-                coreContext.postOnMainThread {
-                    // Only allow to navigate back within the assistant nav controller,
-                    // not to leave the AssistantActivity
-                    onBackPressedDispatcher.addCallback(backPressedCallback)
-                }
-            }
-        }
+        // Always allow back: either within assistant, or finish back to main dialer
+        onBackPressedDispatcher.addCallback(backPressedCallback)
 
         coreContext.mdmConfigAppliedEvent.observe(this) {
             it.consume {

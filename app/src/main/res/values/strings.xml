@@ -161,10 +161,13 @@
     <string name="assistant_dialog_phone_number_validation_not_available_message">Phone number validation is not available, please use email account creation process.</string>
     <string name="assistant_dialog_phone_number_validation_not_available_register_button_label">Register with an email</string>
     <string name="assistant_account_login">Login</string>
+    <string name="assistant_account_save">Save</string>
     <string name="assistant_scan_qr_code">Scan QR code</string>
     <string name="assistant_qr_code_invalid_toast">Invalid QR code!</string>
     <string name="assistant_login_third_party_sip_account">Use a third party SIP account</string>
-    <string name="assistant_login_third_party_sip_account_title">Third party SIP account</string>
+    <string name="assistant_login_third_party_sip_account_title">Account</string>
+    <string name="assistant_account_name">Account name</string>
+    <string name="assistant_sip_server">SIP server</string>
     <string name="assistant_login_using_single_sign_on">Single sign on</string>
     <string name="assistant_login_cant_parse_address_toast">SIP address is invalid!</string>
     <string name="assistant_login_address_without_username_toast">SIP address doesn\'t contains a username!</string>
@@ -205,8 +208,9 @@
     <string name="assistant_recover_phone_number_account_unavailable_no_push_warning">Push notifications do not seem to be available on your device, but they are mandatory for recovering a phone number account in the mobile app.</string>
 
     <!-- Main navigation items -->
+    <string name="bottom_navigation_phone_label">Phone</string>
     <string name="bottom_navigation_contacts_label">Contacts</string>
-    <string name="bottom_navigation_calls_label">Calls</string>
+    <string name="bottom_navigation_calls_label">Call history</string>
     <string name="bottom_navigation_conversations_label">Conversations</string>
     <string name="bottom_navigation_meetings_label">Meetings</string>
 
@@ -433,7 +437,9 @@
     <string name="manage_account_outbound_proxy">Outbound SIP Proxy</string>
     <string name="manage_account_dialog_outbound_proxy_help_message">If this field is filled, the outbound proxy will be enabled automatically. Leave it empty to disable it.</string>
 
-    <string name="account_settings_title">Account settings</string>
+    <string name="account_settings_title">Account</string>
+    <string name="account_settings_basic_title">SIP account</string>
+    <string name="account_settings_other_title">Other settings</string>
     <string name="account_settings_push_notification_title">Allow push notifications</string>
     <string name="account_settings_push_notification_not_available_title">Push notifications aren\'t available!</string>
     <string name="account_settings_im_encryption_mandatory_title">IM encryption mandatory</string>

@@ -436,11 +436,12 @@ class CorePreferences
 
     @get:AnyThread
     val hideAssistantCreateAccount: Boolean
-        get() = config.getBool("ui", "assistant_hide_create_account", false)
+        // Internal softphone: always hide Linphone signup
+        get() = true
 
     @get:AnyThread
     val hideAssistantScanQrCode: Boolean
-        get() = config.getBool("ui", "assistant_disable_qr_code", false)
+        get() = true
 
     @get:AnyThread
     val hideAssistantThirdPartySipAccount: Boolean
@@ -460,7 +461,7 @@ class CorePreferences
 
     @get:AnyThread
     val thirdPartySipAccountDefaultTransport: String
-        get() = config.getString("ui", "assistant_third_party_sip_account_transport", "tls")!!
+        get() = config.getString("ui", "assistant_third_party_sip_account_transport", "udp")!!
 
     @get:AnyThread
     val thirdPartySipAccountDefaultDomain: String
@@ -468,11 +469,8 @@ class CorePreferences
 
     @get:AnyThread
     val assistantDirectlyGoToThirdPartySipAccountLogin: Boolean
-        get() = config.getBool(
-            "ui",
-            "assistant_go_directly_to_third_party_sip_account_login",
-            false
-        )
+        // Internal softphone: always open SIP config form (ignore stale config)
+        get() = true
 
     @get:AnyThread
     val fetchContactsFromDefaultDirectory: Boolean

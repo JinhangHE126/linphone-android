@@ -55,17 +55,86 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
+                <!-- P0: Account name -->
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/header_style"
-                    android:id="@+id/username_label"
+                    android:id="@+id/account_name_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="38dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
+                    android:labelFor="@id/account_name"
+                    android:text="@string/assistant_account_name"
+                    app:layout_constraintTop_toBottomOf="@id/third_party_login_title"
+                    app:layout_constraintStart_toStartOf="@id/account_name"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    style="@style/default_text_style"
+                    android:id="@+id/account_name"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@={viewModel.accountName}"
+                    android:textSize="14sp"
+                    android:textColor="?attr/color_main2_600"
+                    android:background="@drawable/edit_text_background"
+                    android:inputType="text"
+                    android:hint="@string/assistant_account_name"
+                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                    app:layout_constraintTop_toBottomOf="@id/account_name_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <!-- P0: SIP server -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/header_style"
+                    android:id="@+id/sip_server_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:labelFor="@id/sip_server"
+                    android:text="@string/assistant_sip_server"
+                    app:layout_constraintTop_toBottomOf="@id/account_name"
+                    app:layout_constraintStart_toStartOf="@id/sip_server"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    style="@style/default_text_style"
+                    android:id="@+id/sip_server"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@={viewModel.proxy}"
+                    android:textSize="14sp"
+                    android:textColor="?attr/color_main2_600"
+                    android:background="@drawable/edit_text_background"
+                    android:inputType="text|textUri"
+                    android:hint="@string/assistant_sip_server"
+                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                    app:layout_constraintTop_toBottomOf="@id/sip_server_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <!-- P0: Username -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/header_style"
+                    android:id="@+id/username_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:labelFor="@id/username"
                     android:text="@{@string/username + `*`}"
-                    app:layout_constraintTop_toBottomOf="@id/third_party_login_title"
+                    app:layout_constraintTop_toBottomOf="@id/sip_server"
                     app:layout_constraintStart_toStartOf="@id/username"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -77,7 +146,7 @@
                     android:layout_marginEnd="16dp"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:text="@={viewModel.username, default=`johndoe`}"
+                    android:text="@={viewModel.username}"
                     android:textSize="14sp"
                     android:textColor="?attr/color_main2_600"
                     android:background="@drawable/edit_text_background"
@@ -88,6 +157,41 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
+                <!-- P0: Domain -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/header_style"
+                    android:id="@+id/domain_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:labelFor="@id/domain"
+                    android:text="@{@string/sip_address_domain + `*`}"
+                    app:layout_constraintTop_toBottomOf="@id/username"
+                    app:layout_constraintStart_toStartOf="@id/domain"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    style="@style/default_text_style"
+                    android:id="@+id/domain"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@={viewModel.domain}"
+                    android:textSize="14sp"
+                    android:textColor="?attr/color_main2_600"
+                    android:background="@drawable/edit_text_background"
+                    android:inputType="text|textUri"
+                    android:hint="@string/sip_address_domain"
+                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                    app:layout_constraintTop_toBottomOf="@id/domain_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <!-- P0: Password -->
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/header_style"
                     android:id="@+id/password_label"
@@ -97,8 +201,8 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="16dp"
                     android:labelFor="@id/password"
-                    android:text="@{@string/password + `*`}"
-                    app:layout_constraintTop_toBottomOf="@id/username"
+                    android:text="@string/password"
+                    app:layout_constraintTop_toBottomOf="@id/domain"
                     app:layout_constraintStart_toStartOf="@id/password"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -110,7 +214,7 @@
                     android:layout_marginEnd="16dp"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:text="@={viewModel.password, default=`johndoe`}"
+                    android:text="@={viewModel.password}"
                     android:textSize="14sp"
                     android:textColor="?attr/color_main2_600"
                     android:background="@drawable/edit_text_background"
@@ -135,83 +239,18 @@
                     app:layout_constraintTop_toTopOf="@id/password"
                     app:layout_constraintBottom_toBottomOf="@id/password" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/header_style"
-                    android:id="@+id/domain_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:labelFor="@id/domain"
-                    android:text="@{@string/sip_address_domain + `*`, default=`Domain*`}"
-                    app:layout_constraintTop_toBottomOf="@id/password"
-                    app:layout_constraintStart_toStartOf="@id/domain"/>
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    style="@style/default_text_style"
-                    android:id="@+id/domain"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
-                    android:text="@={viewModel.domain, default=`sip.example.net`}"
-                    android:textSize="14sp"
-                    android:textColor="?attr/color_main2_600"
-                    android:background="@drawable/edit_text_background"
-                    android:inputType="text|textUri"
-                    android:hint="@string/sip_address_domain"
-                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
-                    app:layout_constraintTop_toBottomOf="@id/domain_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/header_style"
-                    android:id="@+id/display_name_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:labelFor="@id/display_name"
-                    android:text="@string/sip_address_display_name"
-                    app:layout_constraintTop_toBottomOf="@id/domain"
-                    app:layout_constraintStart_toStartOf="@id/display_name"/>
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    style="@style/default_text_style"
-                    android:id="@+id/display_name"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
-                    android:text="@={viewModel.displayName, default=`John Doe`}"
-                    android:textSize="14sp"
-                    android:textColor="?attr/color_main2_600"
-                    android:background="@drawable/edit_text_background"
-                    android:inputType="text|textPersonName|textCapSentences"
-                    android:hint="@string/sip_address_display_name"
-                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
-                    app:layout_constraintTop_toBottomOf="@id/display_name_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
+                <!-- P0: Transport -->
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/header_style"
                     android:id="@+id/transport_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:labelFor="@id/transport"
                     android:text="@string/assistant_sip_account_transport_protocol"
-                    app:layout_constraintTop_toBottomOf="@id/display_name"
+                    app:layout_constraintTop_toBottomOf="@id/password"
                     app:layout_constraintStart_toStartOf="@id/transport"/>
 
                 <androidx.appcompat.widget.AppCompatSpinner
@@ -244,6 +283,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/transport"
                     app:layout_constraintEnd_toEndOf="@id/transport"/>
 
+                <!-- P1 advanced fold -->
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/section_header_style"
                     android:onClick="@{() -> viewModel.toggleAdvancedSettingsExpand()}"
@@ -255,7 +295,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="20dp"
                     android:text="@string/settings_advanced_title"
-                    android:drawableEnd="@{viewModel.expandAdvancedSettings ? @drawable/caret_up : @drawable/caret_down, default=@drawable/caret_up}"
+                    android:drawableEnd="@{viewModel.expandAdvancedSettings ? @drawable/caret_up : @drawable/caret_down, default=@drawable/caret_down}"
                     android:drawableTint="?attr/color_main2_600"
                     android:background="@drawable/squircle_transparent_button_background"
                     app:layout_constraintStart_toStartOf="parent"
@@ -266,7 +306,7 @@
                     android:id="@+id/advanced_settings_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="authentication_id_label, authentication_id, proxy_label, proxy, outbound_proxy_label, outbound_proxy, outbound_proxy_tooltip"
+                    app:constraint_referenced_ids="authentication_id_label, authentication_id, outbound_proxy_label, outbound_proxy, outbound_proxy_tooltip, display_name_label, display_name"
                     android:visibility="@{viewModel.expandAdvancedSettings ? View.VISIBLE : View.GONE, default=gone}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -304,39 +344,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/header_style"
-                    android:id="@+id/proxy_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:labelFor="@id/outbound_proxy"
-                    android:text="@string/account_settings_sip_proxy_url_title"
-                    app:layout_constraintTop_toBottomOf="@id/authentication_id"
-                    app:layout_constraintStart_toStartOf="@id/proxy"/>
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    style="@style/default_text_style"
-                    android:id="@+id/proxy"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
-                    android:text="@={viewModel.proxy, default=`sip.example.net`}"
-                    android:textSize="14sp"
-                    android:textColor="?attr/color_main2_600"
-                    android:background="@drawable/edit_text_background"
-                    android:inputType="text|textUri"
-                    android:hint="@string/account_settings_sip_proxy_url_title"
-                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
-                    app:layout_constraintTop_toBottomOf="@id/proxy_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/header_style"
                     android:id="@+id/outbound_proxy_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -344,7 +351,7 @@
                     android:layout_marginStart="16dp"
                     android:labelFor="@id/outbound_proxy"
                     android:text="@string/account_settings_outbound_proxy_title"
-                    app:layout_constraintTop_toBottomOf="@id/proxy"
+                    app:layout_constraintTop_toBottomOf="@id/authentication_id"
                     app:layout_constraintStart_toStartOf="@id/outbound_proxy"/>
 
                 <ImageView
@@ -369,7 +376,7 @@
                     android:layout_marginEnd="16dp"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:text="@={viewModel.outboundProxy, default=`sip12.example.net`}"
+                    android:text="@={viewModel.outboundProxy}"
                     android:textSize="14sp"
                     android:textColor="?attr/color_main2_600"
                     android:background="@drawable/edit_text_background"
@@ -377,6 +384,39 @@
                     android:hint="@string/account_settings_outbound_proxy_title"
                     app:layout_constraintWidth_max="@dimen/text_input_max_width"
                     app:layout_constraintTop_toBottomOf="@id/outbound_proxy_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/header_style"
+                    android:id="@+id/display_name_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:labelFor="@id/display_name"
+                    android:text="@string/sip_address_display_name"
+                    app:layout_constraintTop_toBottomOf="@id/outbound_proxy"
+                    app:layout_constraintStart_toStartOf="@id/display_name"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    style="@style/default_text_style"
+                    android:id="@+id/display_name"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@={viewModel.displayName}"
+                    android:textSize="14sp"
+                    android:textColor="?attr/color_main2_600"
+                    android:background="@drawable/edit_text_background"
+                    android:inputType="text|textPersonName|textCapSentences"
+                    android:hint="@string/sip_address_display_name"
+                    app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                    app:layout_constraintTop_toBottomOf="@id/display_name_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -391,10 +431,10 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="@dimen/screen_bottom_margin"
-                    android:text="@string/assistant_account_login"
+                    android:text="@string/assistant_account_save"
                     app:layout_constraintWidth_max="@dimen/button_max_width"
                     app:layout_constraintVertical_bias="1"
-                    app:layout_constraintTop_toBottomOf="@id/outbound_proxy"
+                    app:layout_constraintTop_toBottomOf="@id/display_name"
                     app:layout_constraintBottom_toTopOf="@id/mountains"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

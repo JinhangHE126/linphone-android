@@ -66,12 +66,10 @@ import org.linphone.compatibility.Compatibility
 import org.linphone.core.tools.Log
 import org.linphone.databinding.MainActivityBinding
 import org.linphone.ui.GenericActivity
-import org.linphone.ui.assistant.AssistantActivity
 import org.linphone.ui.main.chat.fragment.ConversationsListFragmentDirections
 import org.linphone.utils.PasswordDialogModel
 import org.linphone.ui.main.viewmodel.MainViewModel
 import org.linphone.ui.main.viewmodel.SharedMainViewModel
-import org.linphone.ui.welcome.WelcomeActivity
 import org.linphone.utils.AppUtils
 import org.linphone.utils.DialogUtils
 import org.linphone.utils.Event
@@ -86,6 +84,7 @@ class MainActivity : GenericActivity() {
         private const val TAG = "[Main Activity]"
 
         private const val DEFAULT_FRAGMENT_KEY = "default_fragment"
+        private const val DIALER_FRAGMENT_ID = 0
         private const val CONTACTS_FRAGMENT_ID = 1
         private const val HISTORY_FRAGMENT_ID = 2
         private const val CHAT_FRAGMENT_ID = 3
@@ -291,7 +290,8 @@ class MainActivity : GenericActivity() {
 
         viewModel.lastAccountRemovedEvent.observe(this) {
             it.consume {
-                startActivity(Intent(this, AssistantActivity::class.java))
+                // Internal softphone: stay on dialer; accounts are configured from the drawer.
+                Log.i("$TAG Last account was removed, staying on main (no forced assistant)")
             }
         }
 
@@ -432,25 +432,14 @@ class MainActivity : GenericActivity() {
         }
 
         coreContext.postOnCoreThread { core ->
+            // Internal softphone: never force Welcome / login assistant.
+            // Users configure SIP accounts from the drawer when needed.
             if (corePreferences.firstLaunch) {
-                Log.i("$TAG First time Linphone 6.0 has been started, showing Welcome activity")
+                Log.i("$TAG First launch — Welcome disabled; opening dialer directly")
                 corePreferences.firstLaunch = false
-                coreContext.postOnMainThread {
-                    try {
-                        startActivity(Intent(this, WelcomeActivity::class.java))
-                    } catch (ise: IllegalStateException) {
-                        Log.e("$TAG Can't start activity: $ise")
-                    }
-                }
-            } else if (core.accountList.isEmpty()) {
-                Log.w("$TAG No account found, showing Assistant activity")
-                coreContext.postOnMainThread {
-                    try {
-                        startActivity(Intent(this, AssistantActivity::class.java))
-                    } catch (ise: IllegalStateException) {
-                        Log.e("$TAG Can't start activity: $ise")
-                    }
-                }
+            }
+            if (core.accountList.isEmpty()) {
+                Log.i("$TAG No account configured — staying on main (assistant auto-start disabled)")
             }
         }
     }
@@ -481,6 +470,9 @@ class MainActivity : GenericActivity() {
         currentlyDisplayedAuthDialog = null
 
         val defaultFragmentId = when (sharedViewModel.currentlyDisplayedFragment.value) {
+            R.id.startCallFragment -> {
+                DIALER_FRAGMENT_ID
+            }
             R.id.contactsListFragment -> {
                 CONTACTS_FRAGMENT_ID
             }
@@ -488,13 +480,15 @@ class MainActivity : GenericActivity() {
                 HISTORY_FRAGMENT_ID
             }
             R.id.conversationsListFragment -> {
-                CHAT_FRAGMENT_ID
+                // Chat hidden in MVP — fall back to dialer
+                DIALER_FRAGMENT_ID
             }
             R.id.meetingsListFragment -> {
-                MEETINGS_FRAGMENT_ID
+                // Meetings hidden in MVP — fall back to dialer
+                DIALER_FRAGMENT_ID
             }
-            else -> { // Default
-                HISTORY_FRAGMENT_ID
+            else -> {
+                DIALER_FRAGMENT_ID
             }
         }
         getPreferences(MODE_PRIVATE).edit {
@@ -576,16 +570,21 @@ class MainActivity : GenericActivity() {
                 }
             }
 
-            val defaultFragmentId = getPreferences(MODE_PRIVATE).getInt(
+            val storedFragmentId = getPreferences(MODE_PRIVATE).getInt(
                 DEFAULT_FRAGMENT_KEY,
-                HISTORY_FRAGMENT_ID
+                DIALER_FRAGMENT_ID
             )
+            // Migrate away from hidden Chat/Meetings tabs
+            val defaultFragmentId = when (storedFragmentId) {
+                CHAT_FRAGMENT_ID, MEETINGS_FRAGMENT_ID -> DIALER_FRAGMENT_ID
+                else -> storedFragmentId
+            }
             Log.i(
                 "$TAG Trying to navigate to set default destination [$defaultFragmentId]"
             )
             try {
                 val navOptionsBuilder = NavOptions.Builder()
-                navOptionsBuilder.setPopUpTo(R.id.historyListFragment, true)
+                navOptionsBuilder.setPopUpTo(R.id.startCallFragment, true)
                 navOptionsBuilder.setLaunchSingleTop(true)
                 val navOptions = navOptionsBuilder.build()
                 val args = bundleOf()
@@ -598,24 +597,16 @@ class MainActivity : GenericActivity() {
                             navOptions
                         )
                     }
-                    CHAT_FRAGMENT_ID -> {
+                    HISTORY_FRAGMENT_ID -> {
                         findNavController().addOnDestinationChangedListener(destinationListener)
                         findNavController().navigate(
-                            R.id.conversationsListFragment,
-                            args,
-                            navOptions
-                        )
-                    }
-                    MEETINGS_FRAGMENT_ID -> {
-                        findNavController().addOnDestinationChangedListener(destinationListener)
-                        findNavController().navigate(
-                            R.id.meetingsListFragment,
+                            R.id.historyListFragment,
                             args,
                             navOptions
                         )
                     }
                     else -> {
-                        Log.i("$TAG Default fragment is the same as the latest visited one")
+                        Log.i("$TAG Default fragment is dialer (Phone tab)")
                         navigatedToDefaultFragment = true
                     }
                 }

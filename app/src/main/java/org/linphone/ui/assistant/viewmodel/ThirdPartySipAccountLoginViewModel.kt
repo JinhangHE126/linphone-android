@@ -47,6 +47,8 @@ class ThirdPartySipAccountLoginViewModel
         private const val TAG = "[Third Party SIP Account Login ViewModel]"
     }
 
+    val accountName = MutableLiveData<String>()
+
     val username = MutableLiveData<String>()
 
     val authId = MutableLiveData<String>()
@@ -159,10 +161,11 @@ class ThirdPartySipAccountLoginViewModel
             val defaultTransport = corePreferences.thirdPartySipAccountDefaultTransport.uppercase(
                 Locale.getDefault()
             )
-            val index = if (defaultTransport.isNotEmpty()) {
-                availableTransports.indexOf(defaultTransport)
-            } else {
-                availableTransports.size - 1
+            // Prefer UDP for internal PBX (MicroSIP default); fall back to first entry
+            val index = when {
+                defaultTransport.isNotEmpty() && availableTransports.contains(defaultTransport) ->
+                    availableTransports.indexOf(defaultTransport)
+                else -> 0 // UDP
             }
             defaultTransportIndexEvent.postValue(Event(index))
         }
@@ -233,10 +236,22 @@ class ThirdPartySipAccountLoginViewModel
 
             val accountParams = core.createAccountParams()
 
-            if (displayName.value.orEmpty().isNotEmpty()) {
+            // Account name is the local label; fall back to advanced display name
+            val label = accountName.value.orEmpty().trim().ifEmpty {
+                displayName.value.orEmpty().trim()
+            }
+            if (label.isNotEmpty()) {
+                identityAddress.displayName = label
+            } else if (displayName.value.orEmpty().isNotEmpty()) {
                 identityAddress.displayName = displayName.value.orEmpty().trim()
             }
             accountParams.identityAddress = identityAddress
+
+            val selectedTransport = when (transport.value.orEmpty().trim()) {
+                TransportType.Tcp.name.uppercase(Locale.getDefault()) -> TransportType.Tcp
+                TransportType.Tls.name.uppercase(Locale.getDefault()) -> TransportType.Tls
+                else -> TransportType.Udp
+            }
 
             val outboundProxyValue = outboundProxy.value.orEmpty().trim()
             val outboundProxyAddress = if (outboundProxyValue.isNotEmpty()) {
@@ -250,15 +265,12 @@ class ThirdPartySipAccountLoginViewModel
                 null
             }
             if (outboundProxyAddress != null) {
-                outboundProxyAddress.transport = when (transport.value.orEmpty().trim()) {
-                    TransportType.Tcp.name.uppercase(Locale.getDefault()) -> TransportType.Tcp
-                    TransportType.Tls.name.uppercase(Locale.getDefault()) -> TransportType.Tls
-                    else -> TransportType.Udp
-                }
+                outboundProxyAddress.transport = selectedTransport
                 Log.i("$TAG Created outbound proxy server SIP address [${outboundProxyAddress.asStringUriOnly()}]")
                 accountParams.setRoutesAddresses(arrayOf(outboundProxyAddress))
             }
 
+            // SIP server (registrar). If empty, use domain — same as MicroSIP when host == domain.
             val proxyServerValue = proxy.value.orEmpty().trim()
             val proxyServerAddress = if (proxyServerValue.isNotEmpty()) {
                 val server = if (proxyServerValue.startsWith("sip:")) {
@@ -270,12 +282,8 @@ class ThirdPartySipAccountLoginViewModel
             } else {
                 outboundProxyAddress ?: domainAddress ?: Factory.instance().createAddress("sip:$domainWithoutSip")
             }
-            proxyServerAddress?.transport = when (transport.value.orEmpty().trim()) {
-                TransportType.Tcp.name.uppercase(Locale.getDefault()) -> TransportType.Tcp
-                TransportType.Tls.name.uppercase(Locale.getDefault()) -> TransportType.Tls
-                else -> TransportType.Udp
-            }
-            Log.i("$TAG Created proxy server SIP address [${proxyServerAddress?.asStringUriOnly()}]")
+            proxyServerAddress?.transport = selectedTransport
+            Log.i("$TAG Created SIP server address [${proxyServerAddress?.asStringUriOnly()}] transport [$selectedTransport]")
             accountParams.serverAddress = proxyServerAddress
             Log.i("$TAG Is outbound proxy enabled ? [${accountParams.isOutboundProxyEnabled}]")
 

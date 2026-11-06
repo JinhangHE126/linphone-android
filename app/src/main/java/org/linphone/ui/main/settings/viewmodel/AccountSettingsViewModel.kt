@@ -47,6 +47,18 @@ class AccountSettingsViewModel
 
     val expandNatPolicySettings = MutableLiveData<Boolean>()
 
+    val expandOtherSettings = MutableLiveData<Boolean>()
+
+    val username = MutableLiveData<String>()
+
+    val domain = MutableLiveData<String>()
+
+    val displayName = MutableLiveData<String>()
+
+    val transport = MutableLiveData<String>()
+
+    val defaultTransportIndexEvent = MutableLiveData<Event<Int>>()
+
     val isDomainInPushNotificationCompatibleList = MutableLiveData<Boolean>()
 
     val pushNotificationsAvailable = MutableLiveData<Boolean>()
@@ -110,6 +122,7 @@ class AccountSettingsViewModel
     init {
         expandAdvancedSettings.value = false
         expandNatPolicySettings.value = false
+        expandOtherSettings.value = false
         showTurnPassword.value = false
 
         availableTransports.add(TransportType.Udp.name.uppercase(Locale.getDefault()))
@@ -150,7 +163,18 @@ class AccountSettingsViewModel
 
                 imEncryptionMandatory.postValue(params.instantMessagingEncryptionMandatory)
 
+                val identityAddress = params.identityAddress
+                username.postValue(identityAddress?.username.orEmpty())
+                domain.postValue(identityAddress?.domain.orEmpty())
+                displayName.postValue(identityAddress?.displayName.orEmpty())
+
                 sipProxyServer.postValue(params.serverAddress?.asStringUriOnly())
+                val serverTransport = params.serverAddress?.transport ?: TransportType.Udp
+                val transportName = serverTransport.name.uppercase(Locale.getDefault())
+                transport.postValue(transportName)
+                val transportIndex = availableTransports.indexOf(transportName).coerceAtLeast(0)
+                defaultTransportIndexEvent.postValue(Event(transportIndex))
+
                 if (params.routesAddresses.isNotEmpty()) {
                     outboundProxyServer.postValue(params.routesAddresses.first().asStringUriOnly())
                 }
@@ -218,14 +242,34 @@ class AccountSettingsViewModel
 
                 newParams.instantMessagingEncryptionMandatory = imEncryptionMandatory.value == true
 
+                val selectedTransport = when (transport.value.orEmpty().trim()) {
+                    TransportType.Tcp.name.uppercase(Locale.getDefault()) -> TransportType.Tcp
+                    TransportType.Tls.name.uppercase(Locale.getDefault()) -> TransportType.Tls
+                    else -> TransportType.Udp
+                }
+
+                val label = displayName.value.orEmpty().trim()
+                val identity = newParams.identityAddress?.clone()
+                if (identity != null) {
+                    identity.displayName = label
+                    newParams.identityAddress = identity
+                }
+
                 val server = sipProxyServer.value.orEmpty()
                 if (server.isNotEmpty()) {
-                    Log.i("$TAG Proxy server set to [$server]")
+                    Log.i("$TAG SIP server set to [$server] transport [$selectedTransport]")
                     val serverAddress = core.interpretUrl(server, false)
                     if (serverAddress != null) {
+                        serverAddress.transport = selectedTransport
                         newParams.serverAddress = serverAddress
                     } else {
-                        Log.e("$TAG Failed to parse proxy server!")
+                        Log.e("$TAG Failed to parse SIP server!")
+                    }
+                } else {
+                    val existing = newParams.serverAddress?.clone()
+                    if (existing != null) {
+                        existing.transport = selectedTransport
+                        newParams.serverAddress = existing
                     }
                 }
                 val outboundProxy = outboundProxyServer.value.orEmpty()
@@ -357,8 +401,18 @@ class AccountSettingsViewModel
     }
 
     @UiThread
+    fun toggleOtherSettingsExpand() {
+        expandOtherSettings.value = expandOtherSettings.value == false
+    }
+
+    @UiThread
     fun toggleAdvancedSettingsExpand() {
         expandAdvancedSettings.value = expandAdvancedSettings.value == false
+    }
+
+    @UiThread
+    fun setTransport(selected: String) {
+        transport.value = selected
     }
 
     @UiThread

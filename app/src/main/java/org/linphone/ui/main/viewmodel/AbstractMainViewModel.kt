@@ -23,7 +23,6 @@ import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
 import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.core.Account
 import org.linphone.core.Call
 import org.linphone.core.ChatMessage
@@ -52,6 +51,8 @@ open class AbstractMainViewModel
 
     val searchFilter = MutableLiveData<String>()
 
+    val dialerSelected = MutableLiveData<Boolean>()
+
     val contactsSelected = MutableLiveData<Boolean>()
 
     val callsSelected = MutableLiveData<Boolean>()
@@ -77,6 +78,10 @@ open class AbstractMainViewModel
     }
 
     val openDrawerMenuEvent: MutableLiveData<Event<Boolean>> by lazy {
+        MutableLiveData()
+    }
+
+    val navigateToDialerEvent: MutableLiveData<Event<Boolean>> by lazy {
         MutableLiveData()
     }
 
@@ -262,6 +267,11 @@ open class AbstractMainViewModel
     }
 
     @UiThread
+    fun navigateToDialer() {
+        navigateToDialerEvent.value = Event(true)
+    }
+
+    @UiThread
     fun navigateToContacts() {
         navigateToContactsEvent.value = Event(true)
     }
@@ -333,13 +343,9 @@ open class AbstractMainViewModel
 
     @WorkerThread
     fun updateAvailableMenus() {
-        hideConversations.postValue(corePreferences.disableChat)
-
-        val conferencingAvailable = LinphoneUtils.isRemoteConferencingAvailable(
-            coreContext.core
-        )
-        val hideGroupCall = corePreferences.disableMeetings || !conferencingAvailable
-        hideMeetings.postValue(hideGroupCall)
+        // MicroSIP-like MVP: always hide Chat and Meetings from main navigation
+        hideConversations.postValue(true)
+        hideMeetings.postValue(true)
     }
 
     @WorkerThread

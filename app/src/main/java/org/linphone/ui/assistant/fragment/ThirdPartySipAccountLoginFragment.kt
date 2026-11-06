@@ -160,7 +160,9 @@ class ThirdPartySipAccountLoginFragment : GenericFragment() {
     }
 
     private fun goBack() {
-        findNavController().popBackStack()
+        if (!findNavController().popBackStack()) {
+            requireActivity().finish()
+        }
     }
 
     private fun showOutboundProxyInfoDialog() {

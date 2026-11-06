@@ -129,8 +129,8 @@ open class AccountLoginViewModel
 
     init {
         coreContext.postOnCoreThread { core ->
-            // Prevent user from leaving assistant if no account was configured yet
-            showBackButton.postValue(core.accountList.isNotEmpty())
+            // Always show back so users can return to dialer without configuring an account
+            showBackButton.postValue(true)
             hideCreateAccount.postValue(corePreferences.hideAssistantCreateAccount)
             hideScanQrCode.postValue(corePreferences.hideAssistantScanQrCode)
             hideThirdPartyAccount.postValue(corePreferences.hideAssistantThirdPartySipAccount)

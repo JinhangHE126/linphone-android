@@ -396,9 +396,9 @@ class ConversationsListFragment : AbstractMainFragment() {
 
         if (listViewModel.hideConversations.value == true) {
             Log.w(
-                "$TAG Resuming fragment that should no longer be accessible, going to contacts list instead"
+                "$TAG Resuming fragment that should no longer be accessible, going to dialer instead"
             )
-            sharedViewModel.navigateToContactsEvent.value = Event(true)
+            sharedViewModel.navigateToDialerEvent.value = Event(true)
         }
 
         try {

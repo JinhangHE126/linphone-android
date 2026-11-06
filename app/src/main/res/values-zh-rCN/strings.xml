@@ -121,9 +121,12 @@
     <string name="assistant_dialog_confirm_phone_number_title">确认电话号码</string>
     <string name="assistant_dialog_confirm_phone_number_message">您确定您的电话号码是%s吗？</string>
     <string name="assistant_account_login">登录</string>
+    <string name="assistant_account_save">储存</string>
+    <string name="assistant_account_name">帐号名称</string>
+    <string name="assistant_sip_server">SIP主机</string>
     <string name="assistant_scan_qr_code">扫描二维码</string>
     <string name="assistant_login_third_party_sip_account">使用第三方SIP账户</string>
-    <string name="assistant_login_third_party_sip_account_title">第三方SIP账户</string>
+    <string name="assistant_login_third_party_sip_account_title">帐号</string>
     <string name="assistant_login_using_single_sign_on">单点登录</string>
     <string name="assistant_login_cant_parse_address_toast">SIP地址无效！</string>
     <string name="assistant_account_login_already_connected_error">账户已存在</string>
@@ -179,8 +182,9 @@
     <string name="assistant_recover_phone_number_account_label">电话号码</string>
     <string name="assistant_recover_email_account_label">电子邮箱</string>
     <string name="assistant_recover_phone_number_account_unavailable_no_push_warning">推送通知似乎在您的设备上不可用，但它们是在移动应用程序中恢复电话号码账户所必需的。</string>
+    <string name="bottom_navigation_phone_label">电话</string>
     <string name="bottom_navigation_contacts_label">联系人</string>
-    <string name="bottom_navigation_calls_label">通话</string>
+    <string name="bottom_navigation_calls_label">通话记录</string>
     <string name="bottom_navigation_conversations_label">聊天</string>
     <string name="bottom_navigation_meetings_label">会议</string>
     <string name="settings_title">设置</string>
@@ -303,7 +307,9 @@
     <string name="manage_account_device_last_connection">上次连接：</string>
     <string name="manage_account_dialog_remove_account_title">退出登录并注销您的账户（该账户信息会被清除）？</string>
     <string name="manage_account_dialog_remove_account_message">如果您想永久删除您的账户，请转到：https://sip.linphone.org</string>
-    <string name="account_settings_title">账户设置</string>
+    <string name="account_settings_title">帐号</string>
+    <string name="account_settings_basic_title">SIP帐号</string>
+    <string name="account_settings_other_title">其他设定</string>
     <string name="account_settings_push_notification_title">允许推送通知</string>
     <string name="account_settings_push_notification_not_available_title">推送通知不可用！</string>
     <string name="account_settings_im_encryption_mandatory_title">IM加密强制</string>

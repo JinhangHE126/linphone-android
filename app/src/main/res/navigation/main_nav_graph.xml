@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/historyListFragment">
+    app:startDestination="@id/startCallFragment">
 
     <fragment
         android:id="@+id/contactsListFragment"
@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_contactsListFragment_to_historyListFragment"
             app:destination="@id/historyListFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/contactsListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_contactsListFragment_to_startCallFragmentAsTab"
+            app:destination="@id/startCallFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/contactsListFragment"
             app:popUpToInclusive="true" />
@@ -62,9 +68,15 @@
         <action
             android:id="@+id/action_historyListFragment_to_startCallFragment"
             app:destination="@id/startCallFragment"
-            app:enterAnim="@anim/slide_in"
-            app:popExitAnim="@anim/slide_out"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:popUpTo="@id/historyListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_historyListFragment_to_startCallFragmentAsTab"
+            app:destination="@id/startCallFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/historyListFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_historyListFragment_to_meetingWaitingRoomFragment"
             app:destination="@id/meetingWaitingRoomFragment"
@@ -218,7 +230,20 @@
         android:id="@+id/startCallFragment"
         android:name="org.linphone.ui.main.history.fragment.StartCallFragment"
         android:label="StartCallFragment"
-        tools:layout="@layout/start_call_fragment" />
+        tools:layout="@layout/start_call_fragment">
+        <action
+            android:id="@+id/action_startCallFragment_to_historyListFragment"
+            app:destination="@id/historyListFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/startCallFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_startCallFragment_to_contactsListFragment"
+            app:destination="@id/contactsListFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/startCallFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/newContactFragment"
@@ -289,6 +314,12 @@
             app:launchSingleTop="true"
             app:enterAnim="@anim/slide_in"
             app:popExitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_conversationsListFragment_to_startCallFragmentAsTab"
+            app:destination="@id/startCallFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/conversationsListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -332,6 +363,12 @@
             app:enterAnim="@anim/slide_in"
             app:popExitAnim="@anim/slide_out"
             app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_meetingsListFragment_to_startCallFragmentAsTab"
+            app:destination="@id/startCallFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/meetingsListFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
