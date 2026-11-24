@@ -432,6 +432,14 @@ class MainActivity : GenericActivity() {
         }
 
         coreContext.postOnCoreThread { core ->
+            coreContext.contactsManager.seedDemoExtensions()
+            val demoCallStarts = setOf(1_700_000_001L, 1_700_000_002L, 1_700_000_003L)
+            for (callLog in core.callLogs) {
+                if (callLog.startDate in demoCallStarts) {
+                    core.removeCallLog(callLog)
+                }
+            }
+
             // Internal softphone: never force Welcome / login assistant.
             // Users configure SIP accounts from the drawer when needed.
             if (corePreferences.firstLaunch) {

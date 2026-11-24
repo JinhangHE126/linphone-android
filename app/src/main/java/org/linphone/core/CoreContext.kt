@@ -718,6 +718,12 @@ class CoreContext
         }
 
         computeUserAgent()
+
+        // Lab / FusionPBX: accept self-signed SIP TLS (CN may be LAN IP, client uses WAN IP).
+        core.verifyServerCertificates(false)
+        core.verifyServerCn(false)
+        Log.w("$TAG SIP TLS server certificate and CN verification disabled (self-signed PBX)")
+
         Log.i("$TAG Core has been configured with user-agent [${core.userAgent}], starting it")
         core.start()
     }

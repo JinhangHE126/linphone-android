@@ -298,6 +298,65 @@ class ContactsManager
         manager.restartLoader(0, args, ContactLoader())
     }
 
+    /**
+     * Demo extensions so the Contacts tab is usable without a phone address book.
+     * Stored in the local Linphone friend list (persisted). Skips entries that already exist.
+     */
+    @WorkerThread
+    fun seedDemoExtensions() {
+        val core = coreContext.core
+        // Factory default only shows sip.linphone.org; internal extensions would be hidden.
+        if (corePreferences.contactsFilter == "sip.linphone.org") {
+            corePreferences.contactsFilter = ""
+        }
+        val listName = ContactLoader.LINPHONE_ADDRESS_BOOK_FRIEND_LIST
+        var friendList = core.getFriendListByName(listName)
+        if (friendList == null) {
+            friendList = core.createFriendList()
+            friendList.isDatabaseStorageEnabled = true
+            friendList.displayName = listName
+            core.addFriendList(friendList)
+            Log.i("$TAG Created local friend list [$listName] for demo contacts")
+        }
+
+        val demos = listOf(
+            Triple("Ext 1000", "1000", "mvp-demo-1000"),
+            Triple("Ext 1001", "1001", "mvp-demo-1001"),
+            Triple("Ext 1006", "1006", "mvp-demo-1006")
+        )
+        val domain = "172.17.6.12"
+        var added = 0
+        for ((name, number, refKey) in demos) {
+            if (friendList.findFriendByRefKey(refKey) != null) continue
+
+            val friend = core.createFriend()
+            friend.edit()
+            friend.name = name
+            friend.refKey = refKey
+            val address = core.interpretUrl("sip:$number@$domain", false)
+            if (address != null) {
+                friend.addAddress(address)
+            }
+            friend.addPhoneNumberWithLabel(
+                Factory.instance().createFriendPhoneNumber(number, "Work")
+            )
+            friend.isSubscribesEnabled = false
+            friend.done()
+
+            val status = friendList.addFriend(friend)
+            if (status == FriendList.Status.OK) {
+                added += 1
+                Log.i("$TAG Seeded demo contact [$name]")
+            } else {
+                Log.e("$TAG Failed to seed demo contact [$name]: $status")
+            }
+        }
+        if (added > 0) {
+            friendList.updateSubscriptions()
+            notifyContactsListChanged()
+        }
+    }
+
     @WorkerThread
     fun addListener(listener: ContactsListener) {
         // Post again to prevent ConcurrentModificationException
